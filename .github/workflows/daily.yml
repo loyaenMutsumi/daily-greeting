@@ -1,0 +1,26 @@
+name: daily-greeting
+
+on:
+  schedule:
+    # UTC 12:00 = 北京时间 20:00
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v5
+
+      - name: 安装 Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: 运行发信脚本
+        env:
+          MAIL_SENDER: ${{ secrets.MAIL_SENDER }}
+          MAIL_AUTH_CODE: ${{ secrets.MAIL_AUTH_CODE }}
+          MAIL_RECEIVER: ${{ secrets.MAIL_RECEIVER }}
+        run: python main.py
